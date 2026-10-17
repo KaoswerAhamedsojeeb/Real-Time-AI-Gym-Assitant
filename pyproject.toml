@@ -1,0 +1,17 @@
+[project]
+name = "real-time-ai-gym-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "KaoswerAhamedsojeeb", email = "kaoswerahamedsojeeb75@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+real-time-ai-gym-assistant = "real_time_ai_gym_assistant:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
