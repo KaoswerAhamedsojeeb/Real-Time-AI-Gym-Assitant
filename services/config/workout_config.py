@@ -1,0 +1,1 @@
+EXERCISES = ["Squats", "Push-ups", "Biceps Curls", "Shoulder Press", "Lunges"]

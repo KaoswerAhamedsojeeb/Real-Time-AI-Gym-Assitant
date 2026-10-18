@@ -9,8 +9,9 @@ def render_login_page():
     if st.session_state.get("user_id") is not None:
         st.success("You are already logged in.")
         return True
-    st.title("AI Gym Assistant - Login")
-    st.markdown("### please enter your credentials to log in.")
+    st.title("AI Gym Assistant")
+    st.markdown("### Please log in to access the AI Gym Assistant.")
+    st.markdown("Please enter your credentials to log in.")
 
     with st.form("login_form", clear_on_submit=False):
         username = st.text_input("Username")
@@ -37,7 +38,5 @@ def render_login_page():
             st.session_state["username"] = username
             st.success("Login successful!")
             return True
-     
-        
     st.rerun()
     return False
