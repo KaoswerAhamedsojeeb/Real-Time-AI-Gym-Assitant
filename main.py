@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+from services.ui.style_loader import load_css, inject_local_font
 from services.auth.login import render_login_page
 from services.state.session_default import initial_session_state
 from services.config.workout_config import EXERCISES
@@ -10,6 +12,14 @@ def main():
         page_icon="", 
         layout="wide",
         initial_sidebar_state="expanded")
+
+    # Load custom CSS
+    css_file_path = os.path.join(os.getcwd(), "static", "styles.css")
+    load_css(css_file_path)
+
+    # Inject local font
+    font_path = os.path.join(os.getcwd(), "static", "AdobeClean.otf")
+    inject_local_font(font_path, "Adobe Clean")
 
     if not render_login_page():
         
