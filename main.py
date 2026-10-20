@@ -4,6 +4,7 @@ from services.ui.style_loader import load_css, inject_local_font
 from services.auth.login import render_login_page
 from services.state.session_default import initial_session_state
 from services.config.workout_config import EXERCISES
+from services.persistence.exercise_repository import init_db
 
 
 def main():
@@ -20,6 +21,9 @@ def main():
     # Inject local font
     font_path = os.path.join(os.getcwd(), "static", "AdobeClean.otf")
     inject_local_font(font_path, "Adobe Clean")
+
+    # Initialize the database
+    init_db()
 
     if not render_login_page():
         

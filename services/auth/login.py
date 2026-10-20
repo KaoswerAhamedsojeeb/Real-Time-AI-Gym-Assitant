@@ -1,4 +1,7 @@
 import streamlit as st
+from services.persistence.exercise_repository import get_or_create_user
+
+
 st.set_page_config(
     page_title="AI Gym Assistant",
     page_icon="", 
@@ -15,28 +18,20 @@ def render_login_page():
 
     with st.form("login_form", clear_on_submit=False):
         username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
         submit_button = st.form_submit_button("Login")
 
 
     if submit_button:
      
         if not username:
-            st.error("Please enter a username.")
+            st.error("Please enter a Unique username.")
             return False
-        elif not password:
-            st.error("Please enter a password.")
-            return False
-
-        elif username == "admin" and password == "password":
-            st.session_state["user_id"] = 1
-            st.session_state["username"] = username
-            st.success("Login successful!")
-            return True
+        
         else:
-            st.session_state["user_id"] = 1
-            st.session_state["username"] = username
+            user = get_or_create_user(username)
+            st.session_state["user_id"] = user["id"]
+            st.session_state["username"] = user["username"]
             st.success("Login successful!")
             return True
-    st.rerun()
+        
     return False
