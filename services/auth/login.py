@@ -10,7 +10,6 @@ st.set_page_config(
 
 def render_login_page():
     if st.session_state.get("user_id") is not None:
-        st.success("You are already logged in.")
         return True
     st.title("AI Gym Assistant")
     st.markdown("### Please log in to access the AI Gym Assistant.")
@@ -32,6 +31,9 @@ def render_login_page():
             st.session_state["user_id"] = user["id"]
             st.session_state["username"] = user["username"]
             st.success("Login successful!")
+            st.rerun()
             return True
+        
+        
         
     return False
