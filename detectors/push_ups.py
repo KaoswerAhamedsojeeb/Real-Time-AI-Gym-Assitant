@@ -53,3 +53,23 @@ class push_ups_detector(BaseExercise):
             elif elbow_angle > self.UP_THRESHOLD and self.stage == "down":
                 self.stage = "up"
                 self.reps += 1
+
+
+        if self.stage == "down":
+            form_status = "depth enough" if elbow_angle < self.DOWN_THRESHOLD else "not deep enough"
+
+        if self.stage == "up":
+            form_status = "good form" if elbow_angle > self.UP_THRESHOLD else "not fully extended"
+
+        else:
+            form_status = "N/A"
+
+        return {
+            "reps": self.reps,
+            "elbow_angle": int(elbow_angle), 
+            "form_status": form_status
+        }
+    
+    def reset(self):
+        self.reps = 0
+        self.stage = "up"
