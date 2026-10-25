@@ -1,6 +1,6 @@
 from core.base_exercise import BaseExercise
 
-class shoulder_press_detector(BaseExercise):  
+class ShoulderpressDetector(BaseExercise):  
     
     DOWN_THRESHOLD = 90
     UP_THRESHOLD = 160

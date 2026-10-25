@@ -1,6 +1,6 @@
 from core.base_exercise import BaseExercise
 
-class biceps_curls_detector(BaseExercise):  
+class BicepsCurlsDetector(BaseExercise):  
     
     DOWN_THRESHOLD = 90
     UP_THRESHOLD = 160
