@@ -9,9 +9,15 @@ class BicepsCurlsDetector(BaseExercise):
     LEFT_SHOULDER = 11
     LEFT_ELBOW = 13
     LEFT_WRIST = 15
+    LEFT_KNEE = 25
+    LEFT_HIP = 23
     RIGHT_SHOULDER = 12
     RIGHT_ELBOW = 14
     RIGHT_WRIST = 16
+    RIGHT_KNEE = 26 
+    RIGHT_HIP = 24
+
+
 
     def __init__(self):
         super().__init__()
@@ -38,10 +44,13 @@ class BicepsCurlsDetector(BaseExercise):
 
         if left_visibility >= right_visibility:
             elbow_angle = left_angle
-            shoulder_idx, elbow_idx, wrist_idx = self.LEFT_SHOULDER, self.LEFT_ELBOW, self.LEFT_WRIST
+            shoulder_idx, elbow_idx, wrist_idx,hip_idx, knee_idx = self.LEFT_SHOULDER, self.LEFT_ELBOW, self.LEFT_WRIST,self.LEFT_HIP, self.LEFT_KNEE
         else:
             elbow_angle = right_angle
-            shoulder_idx, elbow_idx, wrist_idx = self.RIGHT_SHOULDER, self.RIGHT_ELBOW, self.RIGHT_WRIST
+            shoulder_idx, elbow_idx, wrist_idx,hip_idx, knee_idx = self.RIGHT_SHOULDER, self.RIGHT_ELBOW, self.RIGHT_WRIST, self.RIGHT_HIP, self.RIGHT_KNEE
+
+        back_angle = self.calculate_angle(self.get_points(landmarks, shoulder_idx), self.get_points(landmarks, hip_idx), self.get_points(landmarks, knee_idx))
+
 
         key_landmarks_visibility = (landmarks[shoulder_idx].visibility >= self.MIN_VISIBILITY and
                                     landmarks[elbow_idx].visibility >= self.MIN_VISIBILITY and
@@ -62,7 +71,9 @@ class BicepsCurlsDetector(BaseExercise):
 
         return {"reps": self.reps,
                 "elbow_angle": int(elbow_angle),
+                "back_angle" : int(back_angle),
                 "form_status": form_status
+                
                 }
 
     def reset(self):    
