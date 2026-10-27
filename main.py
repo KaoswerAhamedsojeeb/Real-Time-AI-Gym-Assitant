@@ -3,7 +3,7 @@ import os
 from services.ui.style_loader import load_css, inject_local_font, inject_webrtc_styles
 from services.auth.login import render_login_page
 from services.state.session_default import initial_session_state
-from services.config.workout_config import EXERCISES
+from services.config.workout_config import EXERCISE_OPTIONS
 from services.persistence.exercise_repository import init_db
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
@@ -41,7 +41,7 @@ def main():
         st.header("Workout Plan")
         if not workout_started:
             st.selectbox(
-                "Exercise",options=EXERCISES, key="plan_exercise")
+                "Exercise",options=EXERCISE_OPTIONS, key="plan_exercise")
             st.number_input("Sets", min_value=1, max_value=10, value=3, step=1, key="plan_sets")
             st.number_input("Reps per Set", min_value=1, max_value=50, value=10, step=1, key="plan_reps")
             st.markdown("")
@@ -92,7 +92,7 @@ def main():
                     st.metric("Hip Status", f"{st.session_state.hip_status}")
                     st.metric("Shoulder Status", f"{st.session_state.shoulder_status}")
 
-                if exercise == "Biceps Curls":
+                if exercise == "Biceps Curls (Dumbbell)":
                     st.subheader("Biceps Curls Status")
                     st.metric("Elbow Angle", f"{st.session_state.elbow_angle:.2f}°")
                     st.metric("Swing Status", f"{st.session_state.swing_status}")

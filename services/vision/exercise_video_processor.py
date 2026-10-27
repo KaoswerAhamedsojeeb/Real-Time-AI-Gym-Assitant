@@ -106,3 +106,81 @@ class VideoProcessor(VideoProcessorBase):
             2,
             cv2.LINE_AA,
         )
+
+    def _draw_overlays(self, img, metrics, ex_type):
+        if ex_type == "Squats":
+            self._draw_squats_overlays(img, metrics)
+        elif ex_type == "Push-ups":
+            self._draw_pushup_overlays(img, metrics)
+        elif ex_type == "Biceps Curls (Dumbbell)":
+            self._draw_curl_overlays(img, metrics)
+        elif ex_type == "Shoulder Press":
+            self._draw_press_overlays(img, metrics)
+        elif ex_type == "Lunges":
+            self._draw_lunge_overlays(img, metrics)
+
+
+    def _draw_squats_overlays(self, img, metrics):
+        h, _ = img.shape[:2]
+
+        cv2.putText(
+            img,
+            f"DEPTH: {metrics['depth_status']}",
+            (20, h - 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+        )
+    
+    def _draw_pushup_overlays(self, img, metrics):
+        h, _ = img.shape[:2]
+
+        cv2.putText(
+            img,
+            f"BODY: {metrics['body_alignment']} | HIP: {metrics['hip_status']}",
+            (20, h - 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+        )
+
+    def _draw_curl_overlays(self, img, metrics):
+        h, _ = img.shape[:2]
+
+        cv2.putText(
+            img,
+            f"SWING: {metrics['swing_status']}",
+            (20, h - 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+        )
+
+    def _draw_press_overlays(self, img, metrics):
+        h, _ = img.shape[:2]
+
+        cv2.putText(
+            img,
+            f"EXT: {metrics['extension_status']} | BACK: {metrics['back_arch_status']}",
+            (20, h - 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+        )
+
+    def _draw_lunge_overlays(self, img, metrics):
+        h, _ = img.shape[:2]
+
+        cv2.putText(
+            img,
+            f"BALANCE: {metrics['balance_status']}",
+            (20, h - 20),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2,
+        )
