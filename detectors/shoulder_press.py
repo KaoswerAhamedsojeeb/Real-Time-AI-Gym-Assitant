@@ -1,78 +1,88 @@
 from core.base_exercise import BaseExercise
 
-class ShoulderpressDetector(BaseExercise):  
-    
-    DOWN_THRESHOLD = 90
+
+class ShoulderPressDetector(BaseExercise):
     UP_THRESHOLD = 160
+    DOWN_THRESHOLD = 90
     MIN_VISIBILITY = 0.7
 
-    LEFT_EAR =7
     LEFT_SHOULDER = 11
     LEFT_ELBOW = 13
     LEFT_WRIST = 15
-    LEFT_HIP = 23
-    RIGHT_EAR = 8
     RIGHT_SHOULDER = 12
     RIGHT_ELBOW = 14
     RIGHT_WRIST = 16
+    LEFT_HIP = 23
     RIGHT_HIP = 24
+    LEFT_KNEE = 25
+    RIGHT_KNEE = 26
 
     def __init__(self):
         super().__init__()
-        self.stage = "down"
 
-    def get_points(self, landmarks, idx):
-        p = landmarks[idx] # p->points
-        return (p.x, p.y)
-    
-    def process(self, landmarks):   
-        left_shoulder = self.get_points(landmarks, self.LEFT_SHOULDER)
-        left_elbow = self.get_points(landmarks, self.LEFT_ELBOW)
-        left_wrist = self.get_points(landmarks, self.LEFT_WRIST)
+    def reset(self) -> None:
+        self.reps = 0
+        self.stage = None
 
-        right_shoulder = self.get_points(landmarks, self.RIGHT_SHOULDER)
-        right_elbow = self.get_points(landmarks, self.RIGHT_ELBOW)
-        right_wrist = self.get_points(landmarks, self.RIGHT_WRIST)
+    def process(self, landmarks) -> dict:
+        left_vis = landmarks[self.LEFT_ELBOW].visibility
+        right_vis = landmarks[self.RIGHT_ELBOW].visibility
 
-        left_angle = self.calculate_angle(left_shoulder, left_elbow, left_wrist)
-        right_angle = self.calculate_angle(right_shoulder, right_elbow, right_wrist)
-
-        left_visibility = landmarks[self.LEFT_SHOULDER].visibility
-        right_visibility = landmarks[self.RIGHT_SHOULDER].visibility
-
-        if left_visibility >= right_visibility:
-            elbow_angle = left_angle
-            shoulder_idx, elbow_idx, wrist_idx, ear_idx, hip_idx = self.LEFT_SHOULDER, self.LEFT_ELBOW, self.LEFT_WRIST, self.LEFT_EAR, self.LEFT_HIP
+        if left_vis >= right_vis:
+            shoulder_idx = self.LEFT_SHOULDER
+            elbow_idx = self.LEFT_ELBOW
+            wrist_idx = self.LEFT_WRIST
+            hip_idx = self.LEFT_HIP
+            knee_idx = self.LEFT_KNEE
         else:
-            elbow_angle = right_angle
-            shoulder_idx, elbow_idx, wrist_idx, ear_idx, hip_idx = self.RIGHT_SHOULDER, self.RIGHT_ELBOW, self.RIGHT_WRIST, self.RIGHT_EAR, self.RIGHT_HIP
+            shoulder_idx = self.RIGHT_SHOULDER
+            elbow_idx = self.RIGHT_ELBOW
+            wrist_idx = self.RIGHT_WRIST
+            hip_idx = self.RIGHT_HIP
+            knee_idx = self.RIGHT_KNEE
 
-        back_angle = self.calculate_angle(self.get_points(landmarks, ear_idx), self.get_points(landmarks,shoulder_idx), self.get_points(landmarks, hip_idx))
+        elbow_angle = self.calculate_angle(
+            self.get_point(landmarks, shoulder_idx),
+            self.get_point(landmarks, elbow_idx),
+            self.get_point(landmarks, wrist_idx),
+        )
 
-        key_landmarks_visibility = (landmarks[shoulder_idx].visibility >= self.MIN_VISIBILITY and
-                                    landmarks[elbow_idx].visibility >= self.MIN_VISIBILITY and
-                                    landmarks[wrist_idx].visibility >= self.MIN_VISIBILITY)
+        key_landmarks_visible = landmarks[shoulder_idx].visibility > self.MIN_VISIBILITY and landmarks[elbow_idx].visibility > self.MIN_VISIBILITY and landmarks[wrist_idx].visibility > self.MIN_VISIBILITY
 
-        if key_landmarks_visibility:
+        if key_landmarks_visible:
+            if elbow_angle > self.UP_THRESHOLD:
+                self.stage = "up"
+
             if elbow_angle < self.DOWN_THRESHOLD and self.stage == "up":
                 self.stage = "down"
-            elif elbow_angle > self.UP_THRESHOLD and self.stage == "down":
-                self.stage = "up"
                 self.reps += 1
 
-        if self.stage == "down":
-            form_status = "good depth" if elbow_angle < self.DOWN_THRESHOLD else "not deep enough"  
+        if elbow_angle >= self.UP_THRESHOLD:
+            extension_status = "FULL EXTENSION"
+        elif elbow_angle >= 130:
+            extension_status = "NEARLY EXTENDED"
+        elif elbow_angle >= self.DOWN_THRESHOLD:
+            extension_status = "PRESSING"
+        else:
+            extension_status = "START POSITION"
 
-        elif self.stage == "up":
-            form_status = "good form" if elbow_angle > self.UP_THRESHOLD else "not extended"
+        back_angle = self.calculate_angle(
+            self.get_point(landmarks, shoulder_idx),
+            self.get_point(landmarks, hip_idx),
+            self.get_point(landmarks, knee_idx),
+        )
+
+        if back_angle >= 160:
+            back_arch_status = "Neutral"
+        elif back_angle >= 140:
+            back_arch_status = "Slight Arch"
+        else:
+            back_arch_status = "Excessive Arch"
 
         return {
-            "reps":self.reps,
-            "elbow_angle":int(elbow_angle),
-            "back_angle" : int(back_angle),
-            "form_status": form_status
-         }
-    def reset(self):    
-        self.reps = 0
-        self.stage = "down"
+            "reps": self.reps,
+            "elbow_angle": int(elbow_angle),
+            "extension_status": extension_status,
+            "back_arch_status": back_arch_status,
+        }
     
