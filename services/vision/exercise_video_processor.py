@@ -58,4 +58,28 @@ class VideoProcessor(VideoProcessorBase):
         with self._lock:
             return self._exercise_type
 
-    
+    def _draw_skeleton(self, img, landmarks):
+        h, w = img.shape[:2]
+
+        for start_idx, end_idx in POSE_CONNECTIONS:
+            p1 = landmarks[start_idx]
+            p2 = landmarks[end_idx]
+
+            if p1.visibility > 0.7 and p2.visibility > 0.7:
+                cv2.line(
+                    img,
+                    (int(p1.x * w), int(p1.y * h)),
+                    (int(p2.x * w), int(p2.y * h)),
+                    (0, 255, 0),
+                    8
+                )
+
+        for lm in landmarks:
+            if lm.visibility > 0.7:
+                cv2.circle(
+                    img, 
+                    (int(lm.x * w), int(lm.y * h)),
+                    8,
+                    (255, 0, 0),
+                    -1
+                )
