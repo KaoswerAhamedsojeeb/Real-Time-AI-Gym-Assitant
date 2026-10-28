@@ -20,7 +20,6 @@ class BaseExercise(ABC):
 
         return angle
 
-    @abstractmethod
     def get_points(self, landmarks, idx):
         p = landmarks[idx] # p->points
         return (p.x, p.y)
